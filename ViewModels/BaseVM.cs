@@ -8,8 +8,19 @@ namespace MudBlazorPlayground.ViewModels;
 /// <typeparam name="T"></typeparam>
 public class ColumnConfig<T>
 {
-    public Expression<Func<T, object>> Property { get; set; } = _ => default!;
+    public Expression<Func<T, string>>? Property { get; set; }
+    public Expression<Func<T, int>>? PropertyInt { get; set; }
+    public Expression<Func<T, bool>>? PropertyBool { get; set; }
+    public Expression<Func<T, DateTime>>? PropertyDate { get; set; }
     public string Title { get; set; } = string.Empty;
+}
+
+public enum EColumnDataType
+{
+    String,
+    Int,
+    Bool,
+    DateTime,
 }
 
 public abstract class BaseVM<T>
