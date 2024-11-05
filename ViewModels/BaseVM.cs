@@ -13,6 +13,7 @@ public class ColumnConfig<T>
     public Expression<Func<T, bool>>? PropertyBool { get; set; }
     public Expression<Func<T, DateTime>>? PropertyDate { get; set; }
     public string Title { get; set; } = string.Empty;
+    public bool Filterable { get; set; } = true;
 }
 
 public enum EColumnDataType

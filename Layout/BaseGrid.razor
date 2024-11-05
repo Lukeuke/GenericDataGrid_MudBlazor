@@ -2,16 +2,17 @@
 @using MudBlazorPlayground.DTOs
 @typeparam T where T : MudBlazorPlayground.DTOs.BaseDto
 
-<MudDataGrid Items="@Vm.Items" MultiSelection="true" SortMode="SortMode.Multiple" Filterable="true" 
+<MudDataGrid Items="@Vm.Items" MultiSelection="true" SortMode="SortMode.Multiple" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" 
              ReadOnly="@_readOnly" EditMode="@DataGridEditMode.Form"
-             Bordered="true" Dense="true" EditTrigger="@DataGridEditTrigger.Manual">
+             Bordered="true" Dense="true" EditTrigger="@DataGridEditTrigger.Manual"
+             Hideable="true" ShowMenuIcon="true" ColumnsPanelReordering="true"
+             >
     <ToolBarContent>
         <MudText Typo="Typo.h6"></MudText>
         <MudSpacer />
-        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <Columns>
+        <SelectColumn T="T" Hideable="false" />
         @foreach (var column in Vm.Columns)
         {
             /* TODO: TL;DR https://stackoverflow.com/questions/76522057/mudblazor-with-dynamic-columns - for now its ok. */
@@ -19,22 +20,22 @@
 
             if (column.Property is not null)
             {
-                <PropertyColumn T="T" TProperty="string" Property="@column.Property" Title="@column.Title" />
+                <PropertyColumn T="T" TProperty="string" Property="@column.Property" Title="@column.Title" Filterable="@column.Filterable" />
             }
             if (column.PropertyInt is not null)
             {
-                <PropertyColumn T="T" TProperty="int" Property="@column.PropertyInt" Title="@column.Title" />
+                <PropertyColumn T="T" TProperty="int" Property="@column.PropertyInt" Title="@column.Title" Filterable="@column.Filterable"/>
             }
             if (column.PropertyBool is not null)
             {
-                <PropertyColumn T="T" TProperty="bool" Property="@column.PropertyBool" Title="@column.Title" />
+                <PropertyColumn T="T" TProperty="bool" Property="@column.PropertyBool" Title="@column.Title" Filterable="@column.Filterable" />
             }
             if (column.PropertyDate is not null)
             {
-                <PropertyColumn T="T" TProperty="DateTime" Property="@column.PropertyDate" Title="@column.Title" />
+                <PropertyColumn T="T" TProperty="DateTime" Property="@column.PropertyDate" Title="@column.Title" Filterable="@column.Filterable" />
             }
         }
-        <TemplateColumn Hidden="@_hasOnlyReadPermission" CellClass="d-flex justify-end">
+        <TemplateColumn Hidden="@_hasOnlyReadPermission" CellClass="d-flex justify-end" Hideable="false">
             <CellTemplate>
                 <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.RemoveRedEye" OnClick="@(() => Details(context.Item))" />
                 <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
@@ -50,8 +51,6 @@
 @code {
     [Parameter]
     public required BaseVM<T> Vm { get; set; }
-    
-    private string _searchString;
     
     private bool _readOnly = false;
     private bool _hasOnlyReadPermission = false;
